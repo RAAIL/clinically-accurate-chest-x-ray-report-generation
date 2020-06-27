@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[19]:
+# In[1]:
 
 
 import importlib
@@ -14,14 +14,14 @@ trainloader = preprocessing.TrainLoader(DEVICE).trainloader
 dic = preprocessing.dic
 
 
-# In[20]:
+# In[2]:
 
 
 import encoder
 import decoder
 
 
-# In[33]:
+# In[6]:
 
 
 import importlib
@@ -83,7 +83,7 @@ class Im2pGenerator(object):
 #                                                                                self.optimizer.param_groups[0]['lr']
                                                                                0
                                                                               ))
-            # self.__save_model(train_loss, self.args.saved_model_name)
+            self.__save_model(epoch)
             # self.__log(train_loss, val_loss, epoch + 1)
 
     def __epoch_train(self):
@@ -148,6 +148,7 @@ class Im2pGenerator(object):
             # Update weights
             loss.backward()
             self.optimizer.step()
+            break
 
         return train_loss
     
@@ -157,7 +158,22 @@ class Im2pGenerator(object):
 
     def __get_now(self):
         return str(time.strftime('%y%m%d-%H:%M:%S', time.gmtime()))
+    
+    def __save_model(self, epoch):
+        state = {'epoch': epoch,
+                 'sentenceRNN': self.sentenceRNN,
+                 'wordRNN': self.wordRNN,
+                 'encoderCNN': self.encoderCNN,
+                 'optimizer': self.optimizer}
+        filename = 'checkpoints/checkpoint_' + str(epoch) + '.pth.tar'
+        torch.save(state, filename)
 
 im2p = Im2pGenerator()
 im2p.train()
+
+
+# In[ ]:
+
+
+
 
