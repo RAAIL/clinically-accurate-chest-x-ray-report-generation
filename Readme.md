@@ -29,7 +29,7 @@ ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transfor
 - [ ] reinforcement learning section
 - [ ] add validation section
 - [ ] add testing section
-- [ ] save model every epoch
+- [x] save model every epoch
 - [ ] change to receive arguments from commandline
 
 ## Thoughts

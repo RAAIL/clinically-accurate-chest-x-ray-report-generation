@@ -10,7 +10,9 @@ import torch
 importlib.reload(preprocessing)
 
 DEVICE= torch.device('cuda:0' if torch.cuda.is_available() else "cpu")
-trainloader = preprocessing.TrainLoader(DEVICE).trainloader
+loaders = preprocessing.TrainLoader(DEVICE)
+trainloader = loaders.trainloader
+valloader = loaders.valloader
 dic = preprocessing.dic
 
 
@@ -39,9 +41,6 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torchvision import transforms
 from torch.nn.utils.rnn import pack_padded_sequence
 
-# from utils.data_loader import get_loader, Vocabulary
-# from utils.model import *
-# from utils.logger import Logger
 EncoderCNN = encoder.EncoderCNN
 SentenceRNN = decoder.SentenceRNN
 WordRNN = decoder.WordRNN
@@ -52,11 +51,9 @@ BATCH_SIZE=2
 
 class Im2pGenerator(object):
     def __init__(self):
-        self.min_loss = 100000
-        self.train_data_loader = trainloader
         print('in constructor')
-#         self.val_data_loader = self.__init_data_loader(self.args.val_images_json)
-
+        self.train_data_loader = trainloader
+        self.val_data_loader = trainloader
         self.encoderCNN = EncoderCNN()
         self.sentenceRNN = SentenceRNN()
         self.wordRNN = WordRNN(hidden_size=256, vocab_size=len(dic), att_dim=256, embed_size=256, encoded_dim=256, device=DEVICE)
@@ -66,16 +63,11 @@ class Im2pGenerator(object):
             list(self.encoderCNN.parameters()) + list(self.sentenceRNN.parameters()) + list(self.wordRNN.parameters())
         ), lr=LEARNING_RATE)
 
-#         self.scheduler = self.__init_scheduler()
-
-#         self.logger = self.__init_logger()
-
     def train(self):
         for epoch in range(EPOCHS):
             train_loss = self.__epoch_train()
-            # val_loss = self.__epoch_val()
+#             val_loss = self.__epoch_val()
             val_loss = 0
-#             self.scheduler.step(train_loss)
             print("[{}] Epoch-{} - train loss:{} - val loss:{} - lr:{}".format(self.__get_now(),
                                                                                epoch + 1,
                                                                                train_loss,
@@ -84,7 +76,6 @@ class Im2pGenerator(object):
                                                                                0
                                                                               ))
             self.__save_model(epoch)
-            # self.__log(train_loss, val_loss, epoch + 1)
 
     def __epoch_train(self):
         print('in epoch train')
@@ -152,6 +143,17 @@ class Im2pGenerator(object):
 
         return train_loss
     
+    def __epoch_val(self):
+        print('in epoch val')
+        
+        for i, (images, findings, sentenceVectors, word2d, wordsLengths) in enumerate(self.train_data_loader):
+            images = images.to(DEVICE)
+            word2d = word2d.to(DEVICE)
+            featureMap, globalFeatures = self.encoderCNN.forward(images)
+            sentence_states = None
+            loss = 0
+            sentenceLoss = 0
+            wordLoss = 0
 
     def __get_date(self):
         return str(time.strftime('%Y%m%d', time.gmtime()))

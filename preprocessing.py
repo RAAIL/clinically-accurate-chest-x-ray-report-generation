@@ -218,28 +218,18 @@ class ImagesReports(Dataset):
 class TrainLoader:
     def __init__(self, device, batchSize=2):
         dataset = ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transform=preprocess)
-        trainSize = int(dataset.__len__()*0.8)
-        trainSet, testSet = torch.utils.data.random_split(dataset, [trainSize, dataset.__len__() - trainSize])
+        trainSize = int(dataset.__len__()*0.7)
+        trainSet, testAndValSet = torch.utils.data.random_split(dataset, [trainSize, dataset.__len__() - trainSize])
+        valSize = int(dataset.__len__()*0.2)
+        valSet, testSet = torch.utils.data.random_split(testAndValSet, [valSize, dataset.__len__() - trainSize - valSize])
         self.trainloader = torch.utils.data.DataLoader(trainSet, batch_size=batchSize,
+                                          shuffle=True, num_workers=2)
+        self.valloader = torch.utils.data.DataLoader(valSet, batch_size=batchSize,
+                                          shuffle=True, num_workers=2)
+        self.testloader = torch.utils.data.DataLoader(testSet, batch_size=batchSize,
                                           shuffle=True, num_workers=2)
 
 dic = Dictionary()
-
-
-# In[118]:
-
-
-# trainloader = TrainLoader('cpu', 2)
-
-
-# In[119]:
-
-
-# for i, (images, findings, sentenceVectors, word2d, wordsLengths) in enumerate(trainloader.trainloader):
-#         print('findings')
-#         print([[f] for f in findings])
-#         print(wordsLengths)
-#         break
 
 
 # In[ ]:
