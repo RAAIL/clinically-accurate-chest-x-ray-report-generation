@@ -14,7 +14,7 @@
 # 
 # 
 
-# In[1]:
+# In[5]:
 
 
 ### Data Preparation
@@ -156,15 +156,14 @@ class ImagesReports(Dataset):
                     self.skipImages.add(doc.getId()) #skip images where the sentence is 0 or greater than max sentence length
                     continue
         
-                """
-                reports is a dictionary. findingsVector is sentence vector, words is 2d vector of words by sentence
-                """ 
                 self.reports[doc.getId()] = {
                     "findings": findings,
                     "encodedWordsBySentence": wordVector,
                     "encodedSentence": sentenceVector,
                     "wordsLengths": wordLengths
                 }
+                if(self.saveFindings):
+                    self.allFindings.append(findings)
 
     def cleanImagePaths(self):
         tempImagesPath = []
@@ -174,17 +173,23 @@ class ImagesReports(Dataset):
                 tempImagesPath.append(imageName)
         self.images_path = tempImagesPath
         
-    def __init__(self, image_dir, report_dir, device, transform=None):
+    def __init__(self, image_dir, report_dir, device, transform=None, saveFindings=False):
+        self.device=device
         self.transform = transform
         self.images_dir = image_dir
         self.reports_dir = report_dir
         self.images_path = ImagePaths(image_dir).paths
         self.reports_path = os.listdir(report_dir)
+        self.saveFindings = saveFindings
+        self.allFindings = list();
         self.reports = {}
         self.skipImages = set()
         self.getEncodingsByReport()
         self.cleanImagePaths()
-        self.device=device
+        if(saveFindings):
+            with open('myCorpus.txt', 'w+') as f:
+                for item in self.allFindings:
+                    f.write("%s\n" % item)
 
     def __len__(self):
         return len(self.images_path)
@@ -216,8 +221,8 @@ class ImagesReports(Dataset):
         )
 
 class TrainLoader:
-    def __init__(self, device, batchSize=2):
-        dataset = ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transform=preprocess)
+    def __init__(self, device, batchSize=2, saveFindings=False):
+        dataset = ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transform=preprocess, saveFindings=saveFindings)
         trainSize = int(dataset.__len__()*0.7)
         trainSet, testAndValSet = torch.utils.data.random_split(dataset, [trainSize, dataset.__len__() - trainSize])
         valSize = int(dataset.__len__()*0.2)
@@ -230,6 +235,13 @@ class TrainLoader:
                                           shuffle=True, num_workers=2)
 
 dic = Dictionary()
+
+
+# In[6]:
+
+
+# import torch
+# trainloader = TrainLoader(torch.device('cpu'), 2, True)
 
 
 # In[ ]:
