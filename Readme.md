@@ -23,7 +23,7 @@ ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transfor
 
 ## To Do
 
-- [ ] Add pretrained embedder to word decoder (*pretrained on existing data)
+- [x] Add pretrained embedder to word decoder (*pretrained on existing data)
 - [x] Add loss functions
 - [x] word encoder should output a vector representing hot encoding of word
 - [ ] reinforcement learning section
