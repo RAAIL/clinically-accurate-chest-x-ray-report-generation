@@ -24,7 +24,7 @@ import encoder
 import decoder
 
 
-# In[31]:
+# In[34]:
 
 
 import importlib
@@ -128,11 +128,9 @@ class Im2pGenerator(object):
                     
                     targets = targets[greaterThan0LengthIndeces]
                     predictions = predictions[greaterThan0LengthIndeces]
-                    print('targets1', targets.shape)
                     targets = pack_padded_sequence(targets, greaterThan0Lengths, batch_first=True).data
-                    print('targets2', targets.shape)
+
                     scores = pack_padded_sequence(predictions, greaterThan0Lengths, batch_first=True).data
-                    
                     
                     
                     # Calculate loss
@@ -219,22 +217,4 @@ class Im2pGenerator(object):
 
 im2p = Im2pGenerator()
 im2p.train()
-
-
-# In[26]:
-
-
-arr = [[[0]], [[1]]]
-
-
-# In[28]:
-
-
-arr[0:1]
-
-
-# In[ ]:
-
-
-
 
