@@ -42,11 +42,6 @@ class AdaptedDenseNet(models.DenseNet):
     
     def forward(self, x):
         return self.features(x)
-#         out = F.relu(features, inplace=True)
-#         out = F.adaptive_avg_pool2d(out, (1, 1))
-#         out = torch.flatten(out, 1)
-#         out = self.classifier(out)
-
 
 # https://github.com/fawazsammani/knowing-when-to-look-adaptive-attention/blob/master/models.py#L32
 # Use sentinel paper to create correct results
@@ -72,44 +67,4 @@ class EncoderCNN(nn.Module):
         featureMap = self.featuresProjection(featureMap) # (batch_size,num_pixels,256)
         global_features = self.globalProjection(global_features) # (batch_size,256)
         return featureMap, global_features
-
-
-# In[1]:
-
-
-# import Preprocessing
-# trainloader = Preprocessing.TrainLoader().trainloader
-
-
-# In[2]:
-
-
-# encoder = EncoderCNN()
-# encoder.train()
-# for  i, (images, findings, sentenceVectors, word2d, wordLengths) in enumerate(trainloader):
-#     if(i == 0):
-#         featureMap, globalFeatures = encoder.forward(images)
-#         print('globalFeaturesShape', globalFeatures.shape)
-#         print('featureMapShape', featureMap.shape)
-#         break
-        
-# # # TEST OUTPUT
-# # input_image = Image.open("./chest.png")
-# # input_tensor = preprocess(input_image)
-# # input_batch = input_tensor.unsqueeze(0) # create a mini-batch as expected by the model
-
-# # # move the input and model to GPU for speed if available
-# # # if torch.cuda.is_available():
-# # #     input_batch = input_batch.to('cuda')
-# # #     model.to('cuda')
-# # densenet.eval()
-# # with torch.no_grad():
-# #     output = densenet(input_batch)
-# #     print(output.size())
-
-
-# In[ ]:
-
-
-
 

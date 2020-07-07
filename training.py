@@ -99,8 +99,7 @@ class Im2pGenerator(object):
             for sentenceIndex, sentence_value in enumerate(sentenceVectors):
                 endToken, topic_vec, sentence_states = self.sentenceRNN.forward(globalFeatures, sentence_states)
                 endToken = endToken.squeeze(1).squeeze(1)
-#                 print(endToken.type())
-#                 print(sentence_value.type(torch.float).type())
+
                 """***TODO*** Should stop calculating loss for sentences once they're done."""
                 sentenceLoss = sentenceLoss + self.criterionSentence(endToken, sentence_value.type(torch.float).to(DEVICE)).sum()
                 
@@ -172,10 +171,4 @@ class Im2pGenerator(object):
 
 im2p = Im2pGenerator()
 im2p.train()
-
-
-# In[ ]:
-
-
-
 

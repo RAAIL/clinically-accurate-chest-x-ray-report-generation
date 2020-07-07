@@ -1,19 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Preprocessing
-# 
-# 1. [x] The image encoder CNN takes an input image of size 256×256×3.
-# 2. [ ] The report text must be converted to word vectors
-# 3. [ ] The findings need to be converted to series of arrays of words (1, and stop tokens 0)
-# 
-# 
-# getItem return (Image: 2d tensor, Findings: Raw Findings, Sentence Vector: [1, 1, 1 ....0], WordVector: [[1, 2, 3]]
-# 
-# * word vector first dimension refers to which sentence, second dimension refers to which wordId from the dictionary created based on all the words in all the findings
-# 
-# 
-
 # In[5]:
 
 
@@ -211,12 +198,10 @@ class ImagesReports(Dataset):
         image = self.getImage(imagePath)        
         reportId = self.getReportIdFromImagePath(imagePath)
         return (
-#             image.to(self.device),
             image,
             self.reports[reportId]["findings"], #str
             self.reports[reportId]["encodedSentence"], #[1,1,0...]
             torch.tensor(self.reports[reportId]["encodedWordsBySentence"]), #[[1,2,6,8, ...]]
-#             torch.tensor(self.reports[reportId]["encodedWordsBySentence"]).to(self.device), #[[1,2,6,8, ...]]
             self.reports[reportId]["wordsLengths"] # list(int)
         )
 
@@ -235,17 +220,4 @@ class TrainLoader:
                                           shuffle=True, num_workers=2)
 
 dic = Dictionary()
-
-
-# In[6]:
-
-
-# import torch
-# trainloader = TrainLoader(torch.device('cpu'), 2, True)
-
-
-# In[ ]:
-
-
-
 
