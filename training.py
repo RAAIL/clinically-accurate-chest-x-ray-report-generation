@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[5]:
 
 
 import importlib
@@ -9,21 +9,22 @@ import preprocessing
 import torch
 importlib.reload(preprocessing)
 
-DEVICE= torch.device('cuda:0' if torch.cuda.is_available() else "cpu")
+# DEVICE= torch.device('cuda:0' if torch.cuda.is_available() else "cpu")
+DEVICE=torch.device('cpu')
 loaders = preprocessing.TrainLoader(DEVICE)
 trainloader = loaders.trainloader
 valloader = loaders.valloader
 dic = preprocessing.dic
 
 
-# In[2]:
+# In[6]:
 
 
 import encoder
 import decoder
 
 
-# In[6]:
+# In[31]:
 
 
 import importlib
@@ -124,12 +125,16 @@ class Im2pGenerator(object):
                         if(length > 0):
                             greaterThan0LengthIndeces.append(i)
                             greaterThan0Lengths.append(length)
+                    
                     targets = targets[greaterThan0LengthIndeces]
                     predictions = predictions[greaterThan0LengthIndeces]
-
+                    print('targets1', targets.shape)
                     targets = pack_padded_sequence(targets, greaterThan0Lengths, batch_first=True).data
+                    print('targets2', targets.shape)
                     scores = pack_padded_sequence(predictions, greaterThan0Lengths, batch_first=True).data
-
+                    
+                    
+                    
                     # Calculate loss
                     wordLoss = wordLoss + self.criterionWord(scores, targets)
                     
@@ -142,17 +147,60 @@ class Im2pGenerator(object):
 
         return train_loss
     
-    def __epoch_val(self):
-        print('in epoch val')
-        
-        for i, (images, findings, sentenceVectors, word2d, wordsLengths) in enumerate(self.train_data_loader):
-            images = images.to(DEVICE)
-            word2d = word2d.to(DEVICE)
-            featureMap, globalFeatures = self.encoderCNN.forward(images)
-            sentence_states = None
-            loss = 0
-            sentenceLoss = 0
-            wordLoss = 0
+#     def __epoch_val(self):
+#         print('in epoch val')
+#         val_loss = 0
+#         for i, (images, findings, sentenceVectors, word2d, wordsLengths) in enumerate(self.train_data_loader):
+#             images = images.to(DEVICE)
+#             word2d = word2d.to(DEVICE)
+#             featureMap, globalFeatures = self.encoderCNN.forward(images)
+#             sentence_states = None
+#             loss = 0
+#             sentenceLoss = 0
+#             wordLoss = 0
+            
+#             for sentenceIndex, sentence_value in enumerate(sentenceVectors):
+#                 endToken, topic_vec, sentence_states = self.sentenceRNN.forward(globalFeatures, sentence_states)
+#                 endToken = endToken.squeeze(1).squeeze(1)
+              
+#                 captions=word2d[sentenceIndex]
+#                 captionLengths=wordsLengths[sentenceIndex]
+#                 if(any(captionLengths)):
+#                     predictions, alphas, betas, encoded_captions, decode_lengths, sort_ind = self.wordRNN.forward(
+#                         enc_image=featureMap,
+#                         global_features=globalFeatures,
+#                         encoded_captions=captions,
+#                         caption_lengths=captionLengths
+#                     )
+#                     # predictions: (batch_size, largest_sentence_in_batch_size, vocab_size)
+#                     targets = captions
+
+#                     # Remove timesteps that we didn't decode at, or are pads
+#                     # pack_padded_sequence is an easy trick to do this
+
+#                     greaterThan0LengthIndeces = list() #remove length 0 sentences
+#                     greaterThan0Lengths = list()
+#                     for i, length in enumerate(decode_lengths):
+#                         if(length > 0):
+#                             greaterThan0LengthIndeces.append(i)
+#                             greaterThan0Lengths.append(length)
+#                     targets = targets[greaterThan0LengthIndeces]
+#                     predictions = predictions[greaterThan0LengthIndeces]
+
+#                     targets = pack_padded_sequence(targets, greaterThan0Lengths, batch_first=True).data
+#                     scores = pack_padded_sequence(predictions, greaterThan0Lengths, batch_first=True).data
+
+#                     # Calculate loss
+#                     wordLoss = wordLoss + self.criterionWord(scores, targets)
+                    
+#             loss = wordLoss + sentenceLoss
+#             self.optimizer.zero_grad()
+#             # Update weights
+#             loss.backward()
+#             self.optimizer.step()
+#             break
+
+#         return val_loss
 
     def __get_date(self):
         return str(time.strftime('%Y%m%d', time.gmtime()))
@@ -171,4 +219,22 @@ class Im2pGenerator(object):
 
 im2p = Im2pGenerator()
 im2p.train()
+
+
+# In[26]:
+
+
+arr = [[[0]], [[1]]]
+
+
+# In[28]:
+
+
+arr[0:1]
+
+
+# In[ ]:
+
+
+
 

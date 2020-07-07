@@ -124,6 +124,7 @@ import gensim
 class WordRNN(nn.Module):
     def __init__(self, hidden_size, vocab_size, att_dim, embed_size, encoded_dim, device, embeddingFilePath='modelPath/gensim-model'):
         super(WordRNN,self).__init__()
+        self.device=device
         self.hidden_size = hidden_size
         self.fc = nn.Linear(hidden_size, vocab_size)
         self.encoded_to_hidden = nn.Linear(encoded_dim, hidden_size)
@@ -132,15 +133,15 @@ class WordRNN(nn.Module):
         self.adaptive_attention = AdaptiveAttention(hidden_size, att_dim)
         # input to the LSTMCell should be of shape (batch, input_size). Remember we are concatenating the word with
         # the global image features, therefore out input features should be embed_size * 2
-#         self.embedding = nn.Embedding(vocab_size, embed_size)
-        w2v = gensim.models.Word2Vec.load(embeddingFilePath)
-        wordVectors = torch.FloatTensor(w2v.wv.vectors).to(self.device)
-        self.embedding = nn.Embedding.from_pretrained(wordVectors)
+        self.embedding = nn.Embedding(vocab_size, embed_size)
+#         w2v = gensim.models.Word2Vec.load(embeddingFilePath)
+#         wordVectors = torch.FloatTensor(w2v.wv.vectors).to(self.device)
+#         self.embedding = nn.Embedding.from_pretrained(wordVectors)
         
         self.vocab_size = vocab_size
         self.dropout = nn.Dropout(p=0.5)
         self.init_weights()
-        self.device=device
+
         
     def init_weights(self):
         self.fc.weight.data.uniform_(-0.1, 0.1)
