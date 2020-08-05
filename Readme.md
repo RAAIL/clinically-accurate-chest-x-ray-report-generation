@@ -26,10 +26,13 @@ ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transfor
 - [x] Add pretrained embedder to word decoder (*pretrained on existing data)
 - [x] Add loss functions
 - [x] word encoder should output a vector representing hot encoding of word
-- [ ] reinforcement learning section
+- [ ] refactor decoder into sentenceRNN and wordRNN
+- [ ] clean up code names
+- [ ] create clean env
+- [ ] no teacher forcing implementation wordRNN
 - [ ] add validation section
 - [ ] add testing section
-- [x] save model every epoch
+- [ ] reinforcement learning section
 - [ ] change to receive arguments from commandline
 
 ## Thoughts
@@ -38,4 +41,4 @@ ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transfor
 
 ## Acknowledgements
 
-This repo would not have been possible with the help and support of [Alex Dela Cruz](https://www.linkedin.com/in/alex-dela-cruz-89730175)
+This repo would not have been possible without the help and support of [Alex Dela Cruz](https://www.linkedin.com/in/alex-dela-cruz-89730175)

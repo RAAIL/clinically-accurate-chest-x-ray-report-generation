@@ -63,8 +63,8 @@ class EncoderCNN(nn.Module):
         # Get the global features of the image
         global_features = self.avgpool(out).view(batch_size, -1)   # (batch_size, 1024)
         featureMap = out.permute(0, 2, 3, 1)  #  (batch_size,7,7,1024)
-        featureMap = featureMap.view(batch_size,num_pixels,features)          # (batch_size,num_pixels,1024)
-        featureMap = self.featuresProjection(featureMap) # (batch_size,num_pixels,256)
+        featureMap = featureMap.view(batch_size,num_pixels,features)          # (batch_size,7*7,1024)
+        featureMap = self.featuresProjection(featureMap) # (batch_size,7*7,256)
         global_features = self.globalProjection(global_features) # (batch_size,256)
         return featureMap, global_features
 

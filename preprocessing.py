@@ -199,14 +199,14 @@ class ImagesReports(Dataset):
         reportId = self.getReportIdFromImagePath(imagePath)
         return (
             image,
-            self.reports[reportId]["findings"], #str
-            self.reports[reportId]["encodedSentence"], #[1,1,0...]
-            torch.tensor(self.reports[reportId]["encodedWordsBySentence"]), #[[1,2,6,8, ...]]
+            self.reports[reportId]["findings"], #raw_str
+            self.reports[reportId]["encodedSentence"], #[1,1,0...] .shape = (MAX_NUMBER_OF_SENTENCES)
+            torch.tensor(self.reports[reportId]["encodedWordsBySentence"]), #[[1,2,6,8, ...]] (MAX_NUMBER_OF_SENTENCES, MAX_NUMBER_OF_WORDS_IN_SENTENCES)
             self.reports[reportId]["wordsLengths"] # list(int)
         )
 
-class TrainLoader:
-    def __init__(self, device, batchSize=2, saveFindings=False):
+class TrainLoader: #Change to DataLoader because it loads everything
+    def __init__(self, device, batchSize=2, saveFindings=False): # Change to one root directory #Change to crawl based approach
         dataset = ImagesReports('./data/nlm/images', './data/nlm/reports', device=device, transform=preprocess, saveFindings=saveFindings)
         trainSize = int(dataset.__len__()*0.7)
         trainSet, testAndValSet = torch.utils.data.random_split(dataset, [trainSize, dataset.__len__() - trainSize])
